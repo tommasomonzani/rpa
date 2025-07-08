@@ -25,56 +25,56 @@ workflow_name: "vm_monitoring_daily"
 
 trigger:
   type: "scheduled"
-  schedule: ""                # da completare
+  schedule: "0 6 * * *"                # da completare
 
 vm_config:
   critical_vms:
-    - name: ""                # da completare
-      host: ""                # da completare
+    - name: "web-server-01"           # da completare
+      host: "192.168.1.10"            # da completare
       services:
-        - ""                  # da completare
-        - ""
-    - name: ""                # da completare
-      host: ""                # da completare
+        - "apache2"                   # da completare
+        - "redis"                     # da completare
+    - name: "db-server-01"            # da completare
+      host: "db01.internal.lan"       # da completare
       services:
-        - ""                  # da completare
-        - ""
+        - "mysql"                     # da completare
+        - "backupd"                   # da completare
 
 process_steps:
   - step_name: "check_vm_status"
     action: "call_script"
-    script_path: ""           # da completare
-    method: ""                # da completare
-    for_each: ""              # da completare
+    script_path: "/scripts/monitoring/vm_check.py"           # da completare
+    method: "check_connectivity"                                         # da completare
+    for_each: "vm_config.critical_vms"                        # da completare
     checks:
-      - check_type: ""        # da completare
-        expected: ""          # da completare
-      - check_type: ""        # da completare
-        expected: ""          # da completare
+      - check_type: "ping"                                    # da completare
+        expected: "reachable"                                 # da completare
+      - check_type: "ssh_port"                                # da completare
+        expected: "open"                                      # da completare
 
   - step_name: "check_services"
     action: "call_rpa_bot"
-    bot_name: ""              # da completare
-    repository: ""            # da completare
-    for_each: ""              # da completare
+    bot_name: "ServiceMonitoring_Bot"                         # da completare
+    repository: "RPA_ServiceCheck_Repo"                       # da completare
+    for_each: "vm_config.critical_vms"                        # da completare
 
   - step_name: "generate_report"
     action: "call_script"
-    script_path: ""           # da completare
-    template: ""              # da completare
-    format: ""                # da completare
+    script_path: "/scripts/monitoring/vm_check.py"     # da completare
+    template: "vm_status_template.html"      # da completare
+    format: "pdf"                                              # da completare
 
   - step_name: "send_report"
     action: "call_api"
-    api_endpoint: ""          # da completare
-    method: ""                # da completare
+    api_endpoint: "https://api.company.com/notify"            # da completare
+    method: "POST"                                             # da completare
     recipients:
-      - ""                    # da completare
+      - "sysadmin@company.com"                                # da completare
     conditions:
-      - if: ""                # da completare
-        then: ""              # da completare
-      - if: ""                # da completare
-        then: ""              # da completare
+      - if: "output_data.issues_found > 0"            # da completare
+        then: "send_notification"                                           # da completare
+      - if: "output_data.report_generated == true"  # da completare
+        then: "send_report"                                           # da completare
 
 output_data:
   report_generated: true
