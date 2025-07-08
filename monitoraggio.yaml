@@ -1,0 +1,85 @@
+### OBIETTIVO
+Creare un workflow YAML per monitorare lo stato delle VM critiche e generare un report giornaliero.
+
+### SCENARIO
+Ogni mattina alle 8:00, il sistema deve eseguire un controllo su tutte le VM critiche indicate e verificarne:
+- la raggiungibilità
+- i servizi attivi
+
+Il controllo viene effettuato con uno script Python (già fornito), seguito da un bot RPA che verifica i servizi.  
+Infine, viene generato un report in formato PDF basato su un template HTML, che deve essere inviato via API agli amministratori all’indirizzo `sysadmin@company.com`.  
+Il report deve essere inviato **solo se viene generato o se ci sono problemi rilevati.
+
+Dati disponibili:
+- VM:
+  - `web-server-01`, IP `192.168.1.10`, servizi: `apache2`, `redis`
+  - `db-server-01`, host `db01.internal.lan`, servizi: `mysql`, `backupd`
+- Script di controllo: `/scripts/monitoring/vm_check.py`
+- Bot: `ServiceMonitoring_Bot`, repo: `RPA_ServiceCheck_Repo`
+- API endpoint: `https://api.company.com/notify`
+- Destinatario: `sysadmin@company.com`
+
+---
+
+workflow_name: "vm_monitoring_daily"
+
+trigger:
+  type: "scheduled"
+  schedule: ""                # da completare
+
+vm_config:
+  critical_vms:
+    - name: ""                # da completare
+      host: ""                # da completare
+      services:
+        - ""                  # da completare
+        - ""
+    - name: ""                # da completare
+      host: ""                # da completare
+      services:
+        - ""                  # da completare
+        - ""
+
+process_steps:
+  - step_name: "check_vm_status"
+    action: "call_script"
+    script_path: ""           # da completare
+    method: ""                # da completare
+    for_each: ""              # da completare
+    checks:
+      - check_type: ""        # da completare
+        expected: ""          # da completare
+      - check_type: ""        # da completare
+        expected: ""          # da completare
+
+  - step_name: "check_services"
+    action: "call_rpa_bot"
+    bot_name: ""              # da completare
+    repository: ""            # da completare
+    for_each: ""              # da completare
+
+  - step_name: "generate_report"
+    action: "call_script"
+    script_path: ""           # da completare
+    template: ""              # da completare
+    format: ""                # da completare
+
+  - step_name: "send_report"
+    action: "call_api"
+    api_endpoint: ""          # da completare
+    method: ""                # da completare
+    recipients:
+      - ""                    # da completare
+    conditions:
+      - if: ""                # da completare
+        then: ""              # da completare
+      - if: ""                # da completare
+        then: ""              # da completare
+
+output_data:
+  report_generated: true
+  vm_status_summary:
+    total_vms: "__CALCOLATO_AUTOMATICAMENTE__"
+    online_vms: "__CALCOLATO_AUTOMATICAMENTE__"
+    offline_vms: "__CALCOLATO_AUTOMATICAMENTE__"
+    issues_found: "__CALCOLATO_AUTOMATICAMENTE__"
